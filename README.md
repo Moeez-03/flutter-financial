@@ -1,43 +1,105 @@
+# 💳 Flutter Financial — Mobile Financial Service (MFS) & Digital Wallet
 
-A Cross Platform Mobile Financial Service (MFS) Application
+[![Flutter](https://img.shields.io/badge/Flutter-3.3.7-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-2.18.4-0175C2?logo=dart&logoColor=white)](https://dart.dev)
+[![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-3DDC84?logo=android&logoColor=white)](https://flutter.dev)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-## 🔥Project environment
+A modern, cross-platform **Mobile Financial Service (MFS) & Digital Wallet Application** built with **Flutter & Dart**. Designed to provide a secure, seamless mobile banking experience for instant peer-to-peer (P2P) transfers, bill payments, and transaction tracking.
 
+---
 
-    1. Flutter version 3.3.7
+## 📸 App Screenshots
 
-    2. Dart version 2.18.4
+<p align="center">
+  <img src="docs/imgs/1.png" width="150" alt="Welcome Screen" />
+  <img src="docs/imgs/2.png" width="150" alt="Registration / OTP" />
+  <img src="docs/imgs/3.png" width="150" alt="Wallet Dashboard" />
+  <img src="docs/imgs/4.png" width="150" alt="Send Money" />
+  <img src="docs/imgs/5.png" width="150" alt="Confirmation" />
+  <img src="docs/imgs/6.png" width="150" alt="Transaction History" />
+</p>
 
+---
 
-## ✨ Requirements
-* Any Operating System (ie. MacOS X, Linux, Windows)
-* Any IDE with Flutter SDK installed (ie. IntelliJ, Android Studio, VSCode etc)
-* A little knowledge of Dart and Flutter
-* A brain to think 🤓🤓
+## ✨ Key Features
 
-## 🔥Usage
+* **🔐 Authentication & Security:**
+  * Phone number login & registration.
+  * Dedicated Two-Factor **OTP Verification Screen** with auto-focus inputs.
+  * PIN-protected fund transfer confirmation.
 
-Make sure you have Flutter installed on your local machine. For more instructions on how to install flutter, look [here](https://flutter.io/docs/get-started/install).
+* **💰 Digital Wallet Dashboard:**
+  * Real-time wallet balance preview with hide/show privacy toggle.
+  * Quick action cards for Send Money, Cash Out, Bill Payment, and Mobile Recharge.
+  * Intuitive bottom navigation bar.
+
+* **💸 Money Transfer Flow (P2P):**
+  * Instant recipient lookup and amount input.
+  * Multi-step review and confirmation modal to prevent transfer errors.
+  * Real-time animated **Transaction Success** and **Transaction Failed** status screens with unique transaction reference IDs.
+
+* **📊 Ledger & Activity History:**
+  * Chronological transaction list categorized by date.
+  * Visual debit/credit indicators with status badges.
+
+* **👤 Account Management:**
+  * User profile overview, linked accounts, and app configuration settings.
+
+---
+
+## 🛠️ Architecture & Tech Stack
+
 ```
-git clone https://github.com/ssoad/etaka.git
-cd etaka
-flutter pub get
-flutter run
+lib/
+├── logics/             # Service handlers & business logic
+├── main.dart           # App entry point & theme initialization
+└── views/
+    ├── components/     # Reusable UI widgets (buttons, input fields, custom cards)
+    ├── screens/        # Core feature views (Home, Send Money, OTP, History, etc.)
+    └── utils/          # Typography, colors, constants, and styling helpers
 ```
 
-## 📸 ScreenShots
+* **Framework:** [Flutter](https://flutter.dev/) (SDK 3.3.7+)
+* **Language:** [Dart](https://dart.dev/) (2.18.4+)
+* **State & Architecture:** Component-driven modular architecture
+* **Icons & Assets:** Cupertino & Material Icons, Custom Vector Illustrations
 
-<img src="https://github.com/ssoad/etaka/raw/master/docs/imgs/1.png" alt="drawing" style="width:250px;"/> <img src="https://github.com/ssoad/etaka/raw/master/docs/imgs/2.png" alt="drawing" style="width:250px;"/> <img src="https://github.com/ssoad/etaka/raw/master/docs/imgs/3.png" alt="drawing" style="width:250px;"/> <img src="https://github.com/ssoad/etaka/raw/master/docs/imgs/4.png" alt="drawing" style="width:250px;"/> <img src="https://github.com/ssoad/etaka/raw/master/docs/imgs/5.png" alt="drawing" style="width:250px;"/> <img src="https://github.com/ssoad/etaka/raw/master/docs/imgs/6.png" alt="drawing" style="width:250px;"/>
+---
 
-## Getting Started
+## 🚀 Getting Started
 
-This project is a starting point for a Flutter application.
+### Prerequisites
+* Flutter SDK (3.3.0 or higher): [Install Flutter](https://flutter.io/docs/get-started/install)
+* Dart SDK (2.18.0 or higher)
+* Android Studio / Xcode / VS Code with Flutter extension
+* An active Android Emulator, iOS Simulator, or physical device
 
-A few resources to get you started if this is your first Flutter project:
+### Installation
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Moeez-03/flutter-financial.git
+   cd flutter-financial
+   ```
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+2. **Install project dependencies:**
+   ```bash
+   flutter pub get
+   ```
+
+3. **Run on connected device/emulator:**
+   ```bash
+   flutter run
+   ```
+
+To build a release APK for Android:
+```bash
+flutter build apk --release
+```
+
+---
+
+## 👨‍💻 Author
+**Abdul Moeez Nadeem**  
+* GitHub: [@Moeez-03](https://github.com/Moeez-03)
