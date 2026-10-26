@@ -1,0 +1,2198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>eTaka — Mobile Financial Services & Digital Wallet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #070a13;
+      --card-bg: #0d1424;
+      --card-border: rgba(245, 158, 11, 0.18);
+      --card-border-subtle: #192339;
+      --accent-gold: #f59e0b;
+      --accent-gold-glow: rgba(245, 158, 11, 0.25);
+      --accent-emerald: #10b981;
+      --accent-emerald-glow: rgba(16, 185, 129, 0.25);
+      --accent-cyan: #06b6d4;
+      --accent-rose: #f43f5e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --surface: #111a30;
+      --nav-bg: rgba(13, 20, 36, 0.95);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: 95px;
+      padding-top: env(safe-area-inset-top, 10px);
+    }
+
+    /* Top App Bar */
+    .top-app-bar {
+      padding: 0.9rem 1.15rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: rgba(7, 10, 19, 0.92);
+      backdrop-filter: blur(12px);
+      z-index: 90;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .avatar-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #070a13;
+      font-weight: 800;
+      font-size: 1.15rem;
+      box-shadow: 0 0 15px var(--accent-gold-glow);
+      position: relative;
+    }
+
+    .badge-online {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+      border: 2px solid var(--bg);
+    }
+
+    .user-info h2 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .verified-icon {
+      color: #38bdf8;
+      font-size: 0.8rem;
+    }
+
+    .user-info p {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .action-circle-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--surface);
+      border: 1px solid var(--card-border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-main);
+      cursor: pointer;
+      position: relative;
+      font-size: 0.95rem;
+      transition: transform 0.15s, background 0.2s;
+    }
+
+    .action-circle-btn:active {
+      transform: scale(0.92);
+      background: #1e293b;
+    }
+
+    .unread-dot {
+      position: absolute;
+      top: 9px;
+      right: 9px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-rose);
+      box-shadow: 0 0 6px var(--accent-rose);
+    }
+
+    /* Live Ticker Bar */
+    .ticker-stream {
+      background: #090e1c;
+      border-bottom: 1px solid var(--card-border-subtle);
+      height: 36px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      padding: 0 0.85rem;
+      position: relative;
+    }
+
+    .ticker-tag {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.68rem;
+      margin-right: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+      z-index: 2;
+    }
+
+    .ticker-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      animation: pulse 1.4s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.3); }
+    }
+
+    .marquee-content {
+      display: flex;
+      gap: 1.5rem;
+      white-space: nowrap;
+      animation: marquee 24s linear infinite;
+    }
+
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .ticker-item {
+      color: var(--text-muted);
+    }
+
+    .ticker-item b {
+      color: #f8fafc;
+    }
+
+    .up { color: #34d399; font-weight: 600; }
+    .down { color: #f87171; font-weight: 600; }
+
+    /* Content Wrapper */
+    .content-body {
+      padding: 1.1rem;
+    }
+
+    /* Primary Balance Card */
+    .balance-card {
+      background: linear-gradient(145deg, #131c33 0%, #0d1424 60%, #080c16 100%);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 22px;
+      padding: 1.4rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6), 0 0 25px rgba(245, 158, 11, 0.08);
+      margin-bottom: 1.25rem;
+    }
+
+    .balance-card::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 160px;
+      height: 160px;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.85rem;
+    }
+
+    .balance-label {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .eye-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      transition: all 0.2s;
+    }
+    .eye-btn:active {
+      transform: scale(0.92);
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    .tier-badge {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      font-size: 0.68rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 8px;
+      border-radius: 8px;
+      font-weight: 700;
+    }
+
+    .balance-amount {
+      font-size: 2.15rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.35rem;
+    }
+
+    .currency-tag {
+      font-size: 1.1rem;
+      color: var(--accent-gold);
+      font-weight: 700;
+    }
+
+    .card-subtext {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 1.35rem;
+    }
+
+    .growth-pill {
+      color: #34d399;
+      background: rgba(16, 185, 129, 0.1);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+    }
+
+    .card-actions-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.65rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .card-action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.45rem;
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      cursor: pointer;
+      font-size: 0.72rem;
+      font-weight: 600;
+      transition: transform 0.15s;
+    }
+
+    .card-action-btn:active {
+      transform: scale(0.92);
+    }
+
+    .icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      transition: all 0.2s;
+    }
+
+    .box-add { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.25); }
+    .box-send { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.25); }
+    .box-cashout { background: rgba(6, 182, 212, 0.15); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.25); }
+    .box-qr { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.25); }
+
+    /* Section Title */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 1.4rem 0 0.85rem;
+    }
+
+    .section-title {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: #f8fafc;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    .section-link {
+      font-size: 0.75rem;
+      color: var(--accent-gold);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    /* Primary Services Grid */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+    }
+
+    .service-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border-subtle);
+      border-radius: 16px;
+      padding: 0.9rem 0.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .service-card:active {
+      transform: scale(0.94);
+      background: #131d33;
+      border-color: rgba(245, 158, 11, 0.4);
+    }
+
+    .service-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+    }
+
+    .svc-bills { background: rgba(239, 68, 68, 0.12); color: #f87171; }
+    .svc-recharge { background: rgba(59, 130, 246, 0.12); color: #60a5fa; }
+    .svc-savings { background: rgba(16, 185, 129, 0.12); color: #34d399; }
+    .svc-crypto { background: rgba(245, 158, 11, 0.12); color: #fbbf24; }
+    .svc-remit { background: rgba(139, 92, 246, 0.12); color: #a78bfa; }
+    .svc-raast { background: rgba(20, 184, 166, 0.12); color: #2dd4bf; }
+    .svc-banks { background: rgba(234, 179, 8, 0.12); color: #facc15; }
+    .svc-more { background: rgba(148, 163, 184, 0.12); color: #cbd5e1; }
+
+    .service-name {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      line-height: 1.2;
+    }
+
+    /* Live Market Telemetry Grid */
+    .rates-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .rate-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border-subtle);
+      border-radius: 16px;
+      padding: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .rate-left {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .currency-flag {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      background: #162038;
+      font-weight: 700;
+    }
+
+    .rate-info h4 {
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .rate-info p {
+      font-size: 0.68rem;
+      color: var(--text-dim);
+    }
+
+    .rate-val {
+      text-align: right;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .rate-price {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .rate-change {
+      font-size: 0.68rem;
+    }
+
+    /* Supported Platforms Badge Scroll */
+    .platforms-scroll {
+      display: flex;
+      gap: 0.65rem;
+      overflow-x: auto;
+      padding-bottom: 0.4rem;
+      scrollbar-width: none;
+    }
+
+    .platforms-scroll::-webkit-scrollbar { display: none; }
+
+    .platform-chip {
+      background: #0d1527;
+      border: 1px solid #1e293b;
+      padding: 0.5rem 0.85rem;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      white-space: nowrap;
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .platform-chip i { font-size: 0.95rem; }
+    .chip-green { color: #34d399; }
+    .chip-gold { color: #fbbf24; }
+    .chip-blue { color: #60a5fa; }
+    .chip-purple { color: #c084fc; }
+
+    /* Recent Activity Ledger */
+    .ledger-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      margin-top: 0.5rem;
+    }
+
+    .ledger-item {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border-subtle);
+      border-radius: 16px;
+      padding: 0.85rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.2s;
+    }
+
+    .ledger-item:active {
+      background: #141f38;
+    }
+
+    .ledger-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .tx-icon-wrap {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .tx-debit { background: rgba(244, 63, 94, 0.12); color: #fb7185; }
+    .tx-credit { background: rgba(16, 185, 129, 0.12); color: #34d399; }
+    .tx-bill { background: rgba(245, 158, 11, 0.12); color: #fbbf24; }
+
+    .tx-details h4 {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 2px;
+    }
+
+    .tx-details p {
+      font-size: 0.68rem;
+      color: var(--text-dim);
+    }
+
+    .tx-right {
+      text-align: right;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .tx-amount {
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .tx-amount.debit { color: #f43f5e; }
+    .tx-amount.credit { color: #10b981; }
+
+    .tx-status-pill {
+      font-size: 0.62rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    /* Fixed Bottom Nav Bar */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 72px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 0.5rem;
+      z-index: 100;
+    }
+
+    .nav-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-size: 0.68rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color 0.2s;
+      flex: 1;
+    }
+
+    .nav-btn i {
+      font-size: 1.25rem;
+    }
+
+    .nav-btn.active {
+      color: var(--accent-gold);
+    }
+
+    /* Central Floating QR Pay Button */
+    .nav-qr-floating {
+      position: relative;
+      top: -18px;
+    }
+
+    .qr-circle {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #070a13;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.45rem;
+      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.45);
+      border: 3px solid var(--bg);
+      transition: transform 0.15s;
+    }
+
+    .qr-circle:active {
+      transform: scale(0.92);
+    }
+
+    /* Modals & Bottom Sheets */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      display: flex;
+      align-items: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .sheet-modal {
+      width: 100%;
+      max-height: 88vh;
+      background: #0d1424;
+      border-top: 1px solid var(--card-border);
+      border-radius: 26px 26px 0 0;
+      padding: 1.5rem 1.25rem;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-backdrop.open .sheet-modal {
+      transform: translateY(0);
+    }
+
+    .sheet-handle {
+      width: 42px;
+      height: 4px;
+      border-radius: 4px;
+      background: #334155;
+      margin: 0 auto 1.25rem;
+    }
+
+    .sheet-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sheet-subtitle {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.4rem;
+      display: block;
+    }
+
+    .input-field {
+      width: 100%;
+      height: 50px;
+      background: #070a13;
+      border: 1px solid var(--card-border-subtle);
+      border-radius: 12px;
+      padding: 0 1rem;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: var(--accent-gold);
+    }
+
+    .quick-amounts {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .amount-chip {
+      background: #162038;
+      border: 1px solid var(--card-border-subtle);
+      color: #fbbf24;
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .btn-submit {
+      width: 100%;
+      height: 52px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #070a13;
+      font-weight: 800;
+      font-size: 0.95rem;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1.25rem;
+      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.35);
+      transition: transform 0.15s;
+    }
+
+    .btn-submit:active {
+      transform: scale(0.97);
+    }
+
+    /* Receipt Card */
+    .receipt-card {
+      background: #090f1d;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 20px;
+      padding: 1.4rem;
+      text-align: center;
+      margin: 1rem 0;
+    }
+
+    .receipt-success-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 0.85rem;
+      border: 2px solid #10b981;
+      box-shadow: 0 0 20px var(--accent-emerald-glow);
+    }
+
+    /* Toast Notification */
+    .app-toast {
+      position: fixed;
+      top: 65px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: #0f172a;
+      border: 1px solid var(--accent-emerald);
+      color: #fff;
+      padding: 0.7rem 1.25rem;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      z-index: 300;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+    }
+
+    .app-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+
+    /* Tabs Page Container */
+    .tab-page {
+      display: none;
+    }
+
+    .tab-page.active-page {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top App Bar -->
+  <header class="top-app-bar">
+    <div class="user-pill" onclick="switchTab('profile')">
+      <div class="avatar-wrap">
+        AM
+        <div class="badge-online"></div>
+      </div>
+      <div class="user-info">
+        <h2>Abdul Moeez <i class="fas fa-check-circle verified-icon"></i></h2>
+        <p>MFS · +92 301 8492011</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="action-circle-btn" onclick="openQrModal('scan')" title="Scan QR">
+        <i class="fas fa-qrcode"></i>
+      </button>
+      <button class="action-circle-btn" onclick="openNotificationsModal()" title="Notifications">
+        <i class="fas fa-bell"></i>
+        <div class="unread-dot"></div>
+      </button>
+    </div>
+  </header>
+
+  <!-- Live Financial Scraping & Currency Marquee -->
+  <div class="ticker-stream">
+    <div class="ticker-tag">
+      <div class="ticker-pulse"></div> LIVE
+    </div>
+    <div class="marquee-content" id="tickerMarquee">
+      <span class="ticker-item">USD/PKR: <b>278.45</b> <span class="up">▲ +0.12%</span></span>
+      <span class="ticker-item">USD/BDT: <b>121.50</b> <span class="up">▲ +0.08%</span></span>
+      <span class="ticker-item">Gold 24K: <b>Rs. 284,500/tola</b> <span class="up">▲</span></span>
+      <span class="ticker-item">Bitcoin: <b>$68,410</b> <span class="up">▲ +2.8%</span></span>
+      <span class="ticker-item">Ethereum: <b>$2,542</b> <span class="up">▲ +1.9%</span></span>
+      <span class="ticker-item">K-Electric Tariff: <b>Rs. 32.4/kWh</b></span>
+      <span class="ticker-item">USD/AED: <b>3.67</b> <span class="up">▲</span></span>
+      <!-- Duplicate for infinite seamless scroll -->
+      <span class="ticker-item">USD/PKR: <b>278.45</b> <span class="up">▲ +0.12%</span></span>
+      <span class="ticker-item">USD/BDT: <b>121.50</b> <span class="up">▲ +0.08%</span></span>
+      <span class="ticker-item">Gold 24K: <b>Rs. 284,500/tola</b> <span class="up">▲</span></span>
+      <span class="ticker-item">Bitcoin: <b>$68,410</b> <span class="up">▲ +2.8%</span></span>
+    </div>
+  </div>
+
+  <!-- Main Scrollable Body -->
+  <main class="content-body">
+
+    <!-- PAGE 1: HOME (WALLET) -->
+    <div id="pageHome" class="tab-page active-page">
+      
+      <!-- Primary Balance Card -->
+      <div class="balance-card">
+        <div class="card-top">
+          <div class="balance-label">
+            Available Balance
+            <button class="eye-btn" onclick="toggleBalanceVisibility()" id="btnEye">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+          <span class="tier-badge"><i class="fas fa-shield-alt"></i> TIER-2 KYC</span>
+        </div>
+
+        <div class="balance-amount">
+          <span class="currency-tag">Rs.</span>
+          <span id="displayBalance">248,500.00</span>
+        </div>
+
+        <div class="card-subtext">
+          <span>Active Vault:</span>
+          <span class="growth-pill">+12.5% p.a. Profit</span>
+          <span style="color: var(--text-dim);">· Sub-second Rails</span>
+        </div>
+
+        <div class="card-actions-row">
+          <button class="card-action-btn" onclick="openAddMoneyModal()">
+            <div class="icon-box box-add"><i class="fas fa-plus"></i></div>
+            <span>Add Money</span>
+          </button>
+          <button class="card-action-btn" onclick="openSendMoneyModal()">
+            <div class="icon-box box-send"><i class="fas fa-paper-plane"></i></div>
+            <span>Send</span>
+          </button>
+          <button class="card-action-btn" onclick="openCashOutModal()">
+            <div class="icon-box box-cashout"><i class="fas fa-hand-holding-usd"></i></div>
+            <span>Cash Out</span>
+          </button>
+          <button class="card-action-btn" onclick="openQrModal('my')">
+            <div class="icon-box box-qr"><i class="fas fa-qrcode"></i></div>
+            <span>My QR</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Supported Financial Gateways & Banks Marquee -->
+      <div class="section-header" style="margin-top: 0.5rem;">
+        <span class="section-title">Verified Financial Rails</span>
+        <span style="font-size: 0.68rem; color: #34d399;"><i class="fas fa-lock"></i> 256-bit Encrypted</span>
+      </div>
+      <div class="platforms-scroll">
+        <div class="platform-chip"><i class="fab fa-cc-visa chip-gold"></i> Visa Platinum</div>
+        <div class="platform-chip"><i class="fab fa-cc-mastercard chip-green"></i> Mastercard World</div>
+        <div class="platform-chip"><i class="fas fa-bolt chip-green"></i> Raast Instant Pay</div>
+        <div class="platform-chip"><i class="fas fa-university chip-blue"></i> Meezan Bank</div>
+        <div class="platform-chip"><i class="fas fa-university chip-gold"></i> HBL Islamic</div>
+        <div class="platform-chip"><i class="fas fa-mobile-alt chip-purple"></i> JazzCash / Easypaisa</div>
+        <div class="platform-chip"><i class="fas fa-money-bill-wave chip-green"></i> bKash / Nagad MFS</div>
+      </div>
+
+      <!-- Core Services Grid -->
+      <div class="section-header">
+        <span class="section-title">Core Services & Operations</span>
+        <span class="section-link" onclick="showToast('8 Real Service Engines Active')">8 Services</span>
+      </div>
+
+      <div class="services-grid">
+        <div class="service-card" onclick="openBillPayModal()">
+          <div class="service-icon svc-bills"><i class="fas fa-file-invoice-dollar"></i></div>
+          <span class="service-name">Utility Bills</span>
+        </div>
+        <div class="service-card" onclick="openRechargeModal()">
+          <div class="service-icon svc-recharge"><i class="fas fa-mobile-screen"></i></div>
+          <span class="service-name">Mobile Load</span>
+        </div>
+        <div class="service-card" onclick="openSendMoneyModal('bank')">
+          <div class="service-icon svc-banks"><i class="fas fa-building-columns"></i></div>
+          <span class="service-name">Bank Transfer</span>
+        </div>
+        <div class="service-card" onclick="openRaastModal()">
+          <div class="service-icon svc-raast"><i class="fas fa-bolt"></i></div>
+          <span class="service-name">Raast P2P</span>
+        </div>
+        <div class="service-card" onclick="switchTab('analytics')">
+          <div class="service-icon svc-savings"><i class="fas fa-chart-pie"></i></div>
+          <span class="service-name">Analytics</span>
+        </div>
+        <div class="service-card" onclick="openLiveRatesModal()">
+          <div class="service-icon svc-crypto"><i class="fas fa-coins"></i></div>
+          <span class="service-name">Live Forex/Gold</span>
+        </div>
+        <div class="service-card" onclick="openRemittanceModal()">
+          <div class="service-icon svc-remit"><i class="fas fa-globe"></i></div>
+          <span class="service-name">Global Remit</span>
+        </div>
+        <div class="service-card" onclick="openMoreServicesModal()">
+          <div class="service-icon svc-more"><i class="fas fa-ellipsis"></i></div>
+          <span class="service-name">All Services</span>
+        </div>
+      </div>
+
+      <!-- Live Bullion & Currency Telemetry -->
+      <div class="section-header">
+        <span class="section-title">Live Market Bullion & Forex</span>
+        <span class="section-link" onclick="refreshMarketData()"><i class="fas fa-sync-alt"></i> Refresh</span>
+      </div>
+
+      <div class="rates-grid">
+        <div class="rate-card">
+          <div class="rate-left">
+            <div class="currency-flag" style="color: #fbbf24;">AU</div>
+            <div class="rate-info">
+              <h4>Gold 24K (Tola)</h4>
+              <p>Karachi / Lahore</p>
+            </div>
+          </div>
+          <div class="rate-val">
+            <div class="rate-price">Rs. 284,500</div>
+            <div class="rate-change up">+0.8% ▲</div>
+          </div>
+        </div>
+
+        <div class="rate-card">
+          <div class="rate-left">
+            <div class="currency-flag" style="color: #60a5fa;">USD</div>
+            <div class="rate-info">
+              <h4>US Dollar Interbank</h4>
+              <p>PKR Exchange</p>
+            </div>
+          </div>
+          <div class="rate-val">
+            <div class="rate-price">278.45</div>
+            <div class="rate-change up">+0.15 ▲</div>
+          </div>
+        </div>
+
+        <div class="rate-card">
+          <div class="rate-left">
+            <div class="currency-flag" style="color: #a78bfa;">BTC</div>
+            <div class="rate-info">
+              <h4>Bitcoin Real-Time</h4>
+              <p>Digital Asset</p>
+            </div>
+          </div>
+          <div class="rate-val">
+            <div class="rate-price">$68,410</div>
+            <div class="rate-change up">+2.8% ▲</div>
+          </div>
+        </div>
+
+        <div class="rate-card">
+          <div class="rate-left">
+            <div class="currency-flag" style="color: #34d399;">BDT</div>
+            <div class="rate-info">
+              <h4>Bangladesh Taka</h4>
+              <p>Interbank BDT/USD</p>
+            </div>
+          </div>
+          <div class="rate-val">
+            <div class="rate-price">121.50</div>
+            <div class="rate-change up">+0.08 ▲</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Transactions Ledger -->
+      <div class="section-header">
+        <span class="section-title">Recent Passbook Ledger</span>
+        <span class="section-link" onclick="switchTab('history')">View All</span>
+      </div>
+
+      <div class="ledger-list" id="homeLedgerList">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+
+    <!-- PAGE 2: ANALYTICS & EXPENSE TRACKER -->
+    <div id="pageAnalytics" class="tab-page">
+      <div class="section-header" style="margin-top: 0;">
+        <span class="section-title">Financial Telemetry & Spending</span>
+        <span class="tier-badge">October 2026</span>
+      </div>
+
+      <div class="balance-card" style="margin-bottom: 1.25rem;">
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem;">Total Outflows (This Month)</div>
+        <div style="font-size: 1.9rem; font-weight: 800; color: #fff; font-family: 'JetBrains Mono';">Rs. 64,250.00</div>
+        <div style="font-size: 0.75rem; color: #34d399; margin-top: 0.25rem;"><i class="fas fa-arrow-down"></i> -8.4% less than last month (Saving Mode)</div>
+      </div>
+
+      <div class="service-card" style="padding: 1.25rem; margin-bottom: 1rem;">
+        <div style="font-size: 0.85rem; font-weight: 700; margin-bottom: 1rem; color: #f8fafc;">Spend Distribution by Category</div>
+        <div style="width: 220px; height: 220px; margin: 0 auto;">
+          <canvas id="expenseChart"></canvas>
+        </div>
+      </div>
+
+      <div class="ledger-list">
+        <div class="ledger-item">
+          <div class="ledger-left">
+            <div class="tx-icon-wrap" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;"><i class="fas fa-paper-plane"></i></div>
+            <div class="tx-details">
+              <h4>Peer-to-Peer Transfers</h4>
+              <p>4 Transactions</p>
+            </div>
+          </div>
+          <div class="tx-right">
+            <div class="tx-amount debit">Rs. 32,500</div>
+            <div class="tx-status-pill">50.5%</div>
+          </div>
+        </div>
+
+        <div class="ledger-item">
+          <div class="ledger-left">
+            <div class="tx-icon-wrap" style="background: rgba(239, 68, 68, 0.15); color: #f87171;"><i class="fas fa-bolt"></i></div>
+            <div class="tx-details">
+              <h4>Electricity & Gas Bills</h4>
+              <p>2 Bills Settled</p>
+            </div>
+          </div>
+          <div class="tx-right">
+            <div class="tx-amount debit">Rs. 18,200</div>
+            <div class="tx-status-pill">28.3%</div>
+          </div>
+        </div>
+
+        <div class="ledger-item">
+          <div class="ledger-left">
+            <div class="tx-icon-wrap" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;"><i class="fas fa-mobile-alt"></i></div>
+            <div class="tx-details">
+              <h4>Mobile Recharge & Bundles</h4>
+              <p>3 Numbers</p>
+            </div>
+          </div>
+          <div class="tx-right">
+            <div class="tx-amount debit">Rs. 4,550</div>
+            <div class="tx-status-pill">7.1%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 3: DEALS & CASHBACK OFFERS -->
+    <div id="pageDeals" class="tab-page">
+      <div class="section-header" style="margin-top: 0;">
+        <span class="section-title">Location-Based Merchant Deals</span>
+        <span class="tier-badge"><i class="fas fa-map-marker-alt"></i> Lahore, PK</span>
+      </div>
+
+      <div class="ledger-list">
+        <div class="ledger-item" style="padding: 1.15rem;">
+          <div class="ledger-left">
+            <div class="avatar-wrap" style="background: #e11d48; color: #fff; font-size: 1rem;"><i class="fas fa-utensils"></i></div>
+            <div class="tx-details">
+              <h4>KFC Fast Food</h4>
+              <p>20% Flat Cashback with eTaka QR</p>
+            </div>
+          </div>
+          <button class="amount-chip" onclick="showToast('Offer Applied at checkout!')">Claim</button>
+        </div>
+
+        <div class="ledger-item" style="padding: 1.15rem;">
+          <div class="ledger-left">
+            <div class="avatar-wrap" style="background: #ea580c; color: #fff; font-size: 1rem;"><i class="fas fa-shopping-bag"></i></div>
+            <div class="tx-details">
+              <h4>Daraz Mega Shopping</h4>
+              <p>Rs. 1,000 Off on orders above Rs. 5,000</p>
+            </div>
+          </div>
+          <button class="amount-chip" onclick="showToast('Daraz voucher copied: ETAKA1000')">Copy</button>
+        </div>
+
+        <div class="ledger-item" style="padding: 1.15rem;">
+          <div class="ledger-left">
+            <div class="avatar-wrap" style="background: #0284c7; color: #fff; font-size: 1rem;"><i class="fas fa-car"></i></div>
+            <div class="tx-details">
+              <h4>Careem / Uber Rides</h4>
+              <p>15% Cashback on 5 rides</p>
+            </div>
+          </div>
+          <button class="amount-chip" onclick="showToast('Linked with Careem Account')">Activate</button>
+        </div>
+
+        <div class="ledger-item" style="padding: 1.15rem;">
+          <div class="ledger-left">
+            <div class="avatar-wrap" style="background: #059669; color: #fff; font-size: 1rem;"><i class="fas fa-gas-pump"></i></div>
+            <div class="tx-details">
+              <h4>Shell & Total Fuel Stations</h4>
+              <p>2% Fuel Cashback with NFC/QR</p>
+            </div>
+          </div>
+          <button class="amount-chip" onclick="showToast('Active at all participating stations')">Details</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 4: PASSBOOK HISTORY -->
+    <div id="pageHistory" class="tab-page">
+      <div class="section-header" style="margin-top: 0;">
+        <span class="section-title">Full Passbook Ledger</span>
+        <span class="tier-badge" id="passbookCount">8 Entries</span>
+      </div>
+
+      <div class="quick-amounts" style="margin-bottom: 1rem;">
+        <button class="amount-chip" style="background: var(--accent-gold); color: #070a13;" onclick="filterLedger('all', this)">All</button>
+        <button class="amount-chip" onclick="filterLedger('debit', this)">Sent</button>
+        <button class="amount-chip" onclick="filterLedger('credit', this)">Received</button>
+        <button class="amount-chip" onclick="filterLedger('bill', this)">Bills</button>
+      </div>
+
+      <div class="ledger-list" id="fullLedgerList">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+
+    <!-- PAGE 5: USER PROFILE & KYC -->
+    <div id="pageProfile" class="tab-page">
+      <div class="balance-card" style="text-align: center; padding: 2rem 1.5rem;">
+        <div class="avatar-wrap" style="width: 72px; height: 72px; font-size: 1.8rem; margin: 0 auto 0.85rem; border-radius: 20px;">
+          AM
+        </div>
+        <h2 style="font-size: 1.25rem; font-weight: 800; color: #fff;">Abdul Moeez Nadeem</h2>
+        <p style="color: var(--text-muted); font-size: 0.8rem; font-family: 'JetBrains Mono'; margin-top: 2px;">Account No: 0301-8492011</p>
+        <div style="margin-top: 0.75rem;">
+          <span class="tier-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 0.75rem; padding: 4px 12px;">
+            <i class="fas fa-check-shield"></i> BIOMETRIC & CNIC/NID VERIFIED (TIER 2)
+          </span>
+        </div>
+      </div>
+
+      <div class="ledger-list">
+        <div class="ledger-item">
+          <div class="ledger-left">
+            <div class="tx-icon-wrap" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;"><i class="fas fa-id-card"></i></div>
+            <div class="tx-details">
+              <h4>CNIC / National ID</h4>
+              <p>35201-********-9 · Verified</p>
+            </div>
+          </div>
+          <i class="fas fa-check-circle text-emerald-400"></i>
+        </div>
+
+        <div class="ledger-item">
+          <div class="ledger-left">
+            <div class="tx-icon-wrap" style="background: rgba(6, 182, 212, 0.15); color: #22d3ee;"><i class="fas fa-shield-halved"></i></div>
+            <div class="tx-details">
+              <h4>Security PIN & Biometrics</h4>
+              <p>4-Digit PIN Active · Face ID On</p>
+            </div>
+          </div>
+          <button class="amount-chip" onclick="showToast('Security PIN verified')">Change</button>
+        </div>
+
+        <div class="ledger-item">
+          <div class="ledger-left">
+            <div class="tx-icon-wrap" style="background: rgba(168, 85, 247, 0.15); color: #c084fc;"><i class="fas fa-credit-card"></i></div>
+            <div class="tx-details">
+              <h4>Linked Bank Accounts</h4>
+              <p>Meezan Bank (**** 4812) · HBL (**** 9021)</p>
+            </div>
+          </div>
+          <button class="amount-chip" onclick="openAddMoneyModal()">Manage</button>
+        </div>
+
+        <div class="ledger-item">
+          <div class="ledger-left">
+            <div class="tx-icon-wrap" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;"><i class="fas fa-arrow-right-from-bracket"></i></div>
+            <div class="tx-details">
+              <h4>Sign Out Device</h4>
+              <p>Active Session ID: SES-9812-ETAKA</p>
+            </div>
+          </div>
+          <button class="amount-chip" style="background: rgba(239, 68, 68, 0.2); color: #f87171;" onclick="showToast('Session logged')">Lock</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Fixed Bottom App Navigation -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" id="navHome" onclick="switchTab('home')">
+      <i class="fas fa-wallet"></i>
+      <span>Wallet</span>
+    </button>
+    <button class="nav-btn" id="navAnalytics" onclick="switchTab('analytics')">
+      <i class="fas fa-chart-pie"></i>
+      <span>Analytics</span>
+    </button>
+    <div class="nav-qr-floating" onclick="openQrModal('scan')">
+      <div class="qr-circle">
+        <i class="fas fa-qrcode"></i>
+      </div>
+    </div>
+    <button class="nav-btn" id="navDeals" onclick="switchTab('deals')">
+      <i class="fas fa-tag"></i>
+      <span>Deals</span>
+    </button>
+    <button class="nav-btn" id="navHistory" onclick="switchTab('history')">
+      <i class="fas fa-clock-rotate-left"></i>
+      <span>Passbook</span>
+    </button>
+  </nav>
+
+  <!-- ================= MODALS & FLOWS ================= -->
+
+  <!-- 1. SEND MONEY MODAL -->
+  <div class="modal-backdrop" id="modalSendMoney">
+    <div class="sheet-modal">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">
+        <span>Instant P2P Transfer</span>
+        <button class="eye-btn" onclick="closeAllModals()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="sheet-subtitle">Zero Fee Transfer across Raast, JazzCash, Easypaisa & Banks</div>
+
+      <div class="form-group">
+        <label class="form-label">Transfer Destination Platform</label>
+        <select class="input-field" id="sendPlatform">
+          <option value="Raast P2P">Raast Instant Pay (All Banks)</option>
+          <option value="JazzCash MFS">JazzCash Wallet</option>
+          <option value="Easypaisa MFS">Easypaisa Wallet</option>
+          <option value="Meezan Bank">Meezan Bank Ltd</option>
+          <option value="HBL Islamic">Habib Bank Limited (HBL)</option>
+          <option value="Bank Alfalah">Bank Alfalah</option>
+          <option value="bKash Bangladesh">bKash MFS (Global Remit)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Recipient Mobile / Account No</label>
+        <input type="text" class="input-field" id="sendRecipient" placeholder="e.g. 0301 8492011" value="0301-8849201">
+        <div class="quick-amounts">
+          <span class="amount-chip" onclick="fillRecipient('0301-8849201')">Sarah Khan</span>
+          <span class="amount-chip" onclick="fillRecipient('0321-4491029')">Ali Ahmed</span>
+          <span class="amount-chip" onclick="fillRecipient('0345-9921049')">Hamza MFS</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Transfer Amount (PKR / BDT)</label>
+        <input type="number" class="input-field" id="sendAmount" placeholder="Min Rs. 50" value="5000">
+        <div class="quick-amounts">
+          <span class="amount-chip" onclick="fillAmount('sendAmount', 1000)">+1,000</span>
+          <span class="amount-chip" onclick="fillAmount('sendAmount', 5000)">+5,000</span>
+          <span class="amount-chip" onclick="fillAmount('sendAmount', 10000)">+10,000</span>
+          <span class="amount-chip" onclick="fillAmount('sendAmount', 25000)">+25,000</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Purpose Note (Optional)</label>
+        <input type="text" class="input-field" id="sendNote" placeholder="e.g. Monthly rent / Freelance payment" value="Freelance design work">
+      </div>
+
+      <button class="btn-submit" onclick="requestPinAuthorization('send')">
+        <i class="fas fa-lock"></i> Authorize & Send Transfer
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. ADD MONEY MODAL -->
+  <div class="modal-backdrop" id="modalAddMoney">
+    <div class="sheet-modal">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">
+        <span>Add Money to Wallet</span>
+        <button class="eye-btn" onclick="closeAllModals()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="sheet-subtitle">Instant Top-Up via Debit Card, Linked Bank, or Raast</div>
+
+      <div class="form-group">
+        <label class="form-label">Deposit Source Platform</label>
+        <select class="input-field" id="addSource">
+          <option value="Visa Platinum">Visa Platinum Card (•••• 9021)</option>
+          <option value="Mastercard World">Mastercard World (•••• 3341)</option>
+          <option value="Meezan Bank Direct">Meezan Bank Account Link</option>
+          <option value="HBL Direct">HBL Instant Netbanking</option>
+          <option value="SSLCommerz Gateway">SSLCommerz Digital Payment Gateway</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Deposit Amount (Rs.)</label>
+        <input type="number" class="input-field" id="addAmount" placeholder="Amount" value="15000">
+        <div class="quick-amounts">
+          <span class="amount-chip" onclick="fillAmount('addAmount', 5000)">+5,000</span>
+          <span class="amount-chip" onclick="fillAmount('addAmount', 15000)">+15,000</span>
+          <span class="amount-chip" onclick="fillAmount('addAmount', 50000)">+50,000</span>
+        </div>
+      </div>
+
+      <button class="btn-submit" onclick="executeAddMoney()">
+        <i class="fas fa-plus-circle"></i> Complete Instant Deposit
+      </button>
+    </div>
+  </div>
+
+  <!-- 3. CASH OUT MODAL -->
+  <div class="modal-backdrop" id="modalCashOut">
+    <div class="sheet-modal">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">
+        <span>Cash Out via Agent / ATM</span>
+        <button class="eye-btn" onclick="closeAllModals()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="sheet-subtitle">Withdraw physical cash from any authorized MFS Agent</div>
+
+      <div class="form-group">
+        <label class="form-label">Agent Mobile / Agent ID</label>
+        <input type="text" class="input-field" id="cashOutAgent" placeholder="Agent Phone (e.g. 0300 9948211)" value="0300-9948211">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Withdrawal Amount</label>
+        <input type="number" class="input-field" id="cashOutAmount" value="10000" oninput="calculateCashOutFee()">
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.35rem;" id="cashOutFeeNote">
+          MFS Agent Fee (1.75%): Rs. 175.00 · Total Deducted: Rs. 10,175.00
+        </div>
+      </div>
+
+      <button class="btn-submit" onclick="requestPinAuthorization('cashout')">
+        <i class="fas fa-hand-holding-dollar"></i> Confirm Cash Withdrawal
+      </button>
+    </div>
+  </div>
+
+  <!-- 4. BILL PAYMENT MODAL -->
+  <div class="modal-backdrop" id="modalBillPay">
+    <div class="sheet-modal">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">
+        <span>Utility Bill Settlement</span>
+        <button class="eye-btn" onclick="closeAllModals()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="sheet-subtitle">Live real-time billing API integration with instant receipt</div>
+
+      <div class="form-group">
+        <label class="form-label">Bill Category & Company</label>
+        <select class="input-field" id="billCompany">
+          <option value="K-Electric (Electricity)">K-Electric (Electricity - Karachi)</option>
+          <option value="LESCO (Electricity)">LESCO (Electricity - Lahore)</option>
+          <option value="IESCO (Electricity)">IESCO (Electricity - Islamabad)</option>
+          <option value="SNGPL (Natural Gas)">SNGPL (Sui Northern Gas)</option>
+          <option value="SSGC (Natural Gas)">SSGC (Sui Southern Gas)</option>
+          <option value="WASA (Water & Sewerage)">WASA (Water & Sanitation)</option>
+          <option value="StormFiber (Fiber Optic)">StormFiber High-Speed Internet</option>
+          <option value="PTCL (Broadband/Evo)">PTCL Broadband & Landline</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">14-Digit Consumer / Reference ID</label>
+        <input type="text" class="input-field" id="billReference" placeholder="e.g. 04000 12849102" value="04000184920145">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Billing Amount (Rs.)</label>
+        <input type="number" class="input-field" id="billAmount" value="8450">
+      </div>
+
+      <button class="btn-submit" onclick="requestPinAuthorization('bill')">
+        <i class="fas fa-receipt"></i> Pay Bill & Get Official Receipt
+      </button>
+    </div>
+  </div>
+
+  <!-- 5. MOBILE RECHARGE MODAL -->
+  <div class="modal-backdrop" id="modalRecharge">
+    <div class="sheet-modal">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">
+        <span>Mobile Airtime & Packages</span>
+        <button class="eye-btn" onclick="closeAllModals()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="sheet-subtitle">Instant Top-Up across all Cellular Operators</div>
+
+      <div class="form-group">
+        <label class="form-label">Mobile Network Operator</label>
+        <select class="input-field" id="rechargeOperator">
+          <option value="Jazz 4G">Jazz 4G (Mobilink)</option>
+          <option value="Telenor 4G">Telenor Pakistan</option>
+          <option value="Zong 4G">Zong 4G (CMPak)</option>
+          <option value="Ufone 4G">Ufone (PTML)</option>
+          <option value="Grameenphone">Grameenphone (Bangladesh)</option>
+          <option value="Robi Axiata">Robi Axiata</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Phone Number</label>
+        <input type="text" class="input-field" id="rechargePhone" placeholder="03xx-xxxxxxx" value="0301-8492011">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Package / Load Amount (Rs.)</label>
+        <input type="number" class="input-field" id="rechargeAmount" value="1200">
+        <div class="quick-amounts">
+          <span class="amount-chip" onclick="fillAmount('rechargeAmount', 500)">Rs. 500</span>
+          <span class="amount-chip" onclick="fillAmount('rechargeAmount', 1200)">Super Card (1,200)</span>
+          <span class="amount-chip" onclick="fillAmount('rechargeAmount', 2500)">Monthly Mega (2,500)</span>
+        </div>
+      </div>
+
+      <button class="btn-submit" onclick="requestPinAuthorization('recharge')">
+        <i class="fas fa-bolt"></i> Complete Airtime Recharge
+      </button>
+    </div>
+  </div>
+
+  <!-- 6. QR SCANNER & MY QR MODAL -->
+  <div class="modal-backdrop" id="modalQr">
+    <div class="sheet-modal" style="text-align: center;">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title" style="justify-content: center; position: relative;">
+        <span id="qrModalTitle">Merchant QR Settlement</span>
+        <button class="eye-btn" style="position: absolute; right: 0;" onclick="closeAllModals()"><i class="fas fa-times"></i></button>
+      </div>
+      
+      <div id="qrScanView" style="display: none; padding: 1rem 0;">
+        <div style="width: 200px; height: 200px; margin: 0 auto; border: 2px dashed #f59e0b; border-radius: 20px; display: flex; align-items: center; justify-content: center; background: rgba(245, 158, 11, 0.05); position: relative;">
+          <i class="fas fa-qrcode" style="font-size: 5rem; color: #fbbf24;"></i>
+          <div style="position: absolute; width: 100%; height: 3px; background: #10b981; animation: scanLine 2s infinite ease-in-out;"></div>
+        </div>
+        <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 1rem;">Point device camera at any EMVCo / Raast Merchant QR Code</p>
+        <button class="btn-submit" onclick="simulateScanMerchant()">
+          <i class="fas fa-store"></i> Simulate Scan (Gloria Jean's Coffee)
+        </button>
+      </div>
+
+      <div id="qrMyView" style="padding: 1rem 0;">
+        <div style="background: #fff; padding: 1.25rem; border-radius: 20px; width: 200px; height: 200px; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=etaka://pay/03018492011/abdul-moeez" style="width: 100%; height: 100%;" alt="My QR Code">
+        </div>
+        <h3 style="font-size: 1rem; color: #fff; margin-top: 1rem;">Abdul Moeez (eTaka Merchant ID)</h3>
+        <p style="font-size: 0.78rem; color: var(--text-muted); font-family: 'JetBrains Mono';">RAAST: PK88ETAK03018492011</p>
+        <button class="amount-chip" style="margin-top: 0.75rem;" onclick="showToast('QR Code saved to gallery')"><i class="fas fa-download"></i> Save QR Image</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. PIN KEYPAD AUTHORIZATION MODAL -->
+  <div class="modal-backdrop" id="modalPin">
+    <div class="sheet-modal" style="text-align: center;">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title" style="justify-content: center; position: relative;">
+        <span>Enter Security PIN</span>
+        <button class="eye-btn" style="position: absolute; right: 0;" onclick="closeAllModals()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="sheet-subtitle">Authorize transaction using your 4-digit secret key</div>
+
+      <div style="display: flex; justify-content: center; gap: 0.85rem; margin: 1.5rem 0;" id="pinDots">
+        <div class="pin-dot" id="dot1" style="width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--accent-gold); transition: background 0.15s;"></div>
+        <div class="pin-dot" id="dot2" style="width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--accent-gold); transition: background 0.15s;"></div>
+        <div class="pin-dot" id="dot3" style="width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--accent-gold); transition: background 0.15s;"></div>
+        <div class="pin-dot" id="dot4" style="width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--accent-gold); transition: background 0.15s;"></div>
+      </div>
+
+      <!-- In-App Keypad -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; max-width: 280px; margin: 0 auto;">
+        <button class="action-circle-btn" style="width: 100%; height: 54px; font-size: 1.3rem; font-weight: 700;" onclick="pressPin('1')">1</button>
+        <button class="action-circle-btn" style="width: 100%; height: 54px; font-size: 1.3rem; font-weight: 700;" onclick="pressPin('2')">2</button>
+        <button class="action-circle-btn" style="width: 100%; height: 54px; font-size: 1.3rem; font-weight: 700;" onclick="pressPin('3')">3</button>
+        <button class="action-circle-btn" style="width: 100%; height: 54px; font-size: 1.3rem; font-weight: 700;" onclick="pressPin('4')">4</button>
+        <button class="action-circle-btn" style="width: 100%; height: 54px; font-size: 1.3rem; font-weight: 700;" onclick="pressPin('5')">5</button>
+        <button class="action-circle-btn" style="width: 100%; height: 54px; font-size: 1.3rem; font-weight: 700;" onclick="pressPin('6')">6</button>
+        <button class="action-circle-btn" style="width: 100%; height: 54px; font-size: 1.3rem; font-weight: 700;" onclick="pressPin('7')">7</button>
+        <button class="action-circle-btn" style="width: 100%; height: 54px; font-size: 1.3rem; font-weight: 700;" onclick="pressPin('8')">8</button>
+        <button class="action-circle-btn" style="width: 100%; height: 54px; font-size: 1.3rem; font-weight: 700;" onclick="pressPin('9')">9</button>
+        <button class="action-circle-btn" style="width: 100%; height: 54px; font-size: 1.1rem; color: #38bdf8;" onclick="useBiometrics()"><i class="fas fa-fingerprint"></i></button>
+        <button class="action-circle-btn" style="width: 100%; height: 54px; font-size: 1.3rem; font-weight: 700;" onclick="pressPin('0')">0</button>
+        <button class="action-circle-btn" style="width: 100%; height: 54px; font-size: 1.1rem; color: #f87171;" onclick="clearPin()"><i class="fas fa-backspace"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. TRANSACTION RECEIPT SUCCESS MODAL -->
+  <div class="modal-backdrop" id="modalReceipt">
+    <div class="sheet-modal">
+      <div class="sheet-handle"></div>
+      <div class="receipt-card">
+        <div class="receipt-success-icon">
+          <i class="fas fa-check"></i>
+        </div>
+        <h2 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 0.2rem;">Transaction Successful!</h2>
+        <p style="font-size: 0.78rem; color: #34d399; font-weight: 700;">PROCESSED IN 84MS · ZERO LOSS</p>
+
+        <div style="margin: 1.25rem 0; font-size: 2rem; font-weight: 800; color: #fff; font-family: 'JetBrains Mono';" id="receiptAmount">
+          Rs. 5,000.00
+        </div>
+
+        <div style="background: #0d1424; border-radius: 12px; padding: 0.85rem; text-align: left; font-size: 0.75rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.45rem;">
+          <div style="display: flex; justify-content: space-between;">
+            <span>Transaction ID:</span>
+            <b style="color: #fff; font-family: 'JetBrains Mono';" id="receiptTxId">TXN-98421-ETAKA-8812</b>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Recipient / Bill:</span>
+            <b style="color: #fff;" id="receiptTo">Sarah Khan (JazzCash)</b>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Date & Timestamp:</span>
+            <b style="color: #fff;" id="receiptDate">26 Oct 2026, 05:15 PM</b>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Remaining Balance:</span>
+            <b style="color: #fbbf24; font-family: 'JetBrains Mono';" id="receiptRemaining">Rs. 243,500.00</b>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-submit" onclick="closeAllModals()">
+        <i class="fas fa-check-circle"></i> Done & Return to Wallet
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="app-toast" id="appToast">
+    <i class="fas fa-check-circle" style="color: #10b981;"></i>
+    <span id="toastMsg">Operation Completed</span>
+  </div>
+
+  <style>
+    @keyframes scanLine {
+      0% { top: 0; }
+      50% { top: 100%; }
+      100% { top: 0; }
+    }
+  </style>
+
+  <script>
+    // State Management
+    let currentBalance = 248500.00;
+    let balanceVisible = true;
+    let pendingAction = null;
+    let pinCode = "";
+
+    const transactions = [
+      { id: "TXN-88124", title: "Freelance Payment (Upwork)", subtitle: "Credit via Visa Card", amount: 48500.00, type: "credit", date: "Today, 02:40 PM", cat: "topup" },
+      { id: "TXN-88123", title: "Transfer to Sarah Khan", subtitle: "Sent via JazzCash MFS", amount: -15000.00, type: "debit", date: "Today, 11:15 AM", cat: "sent" },
+      { id: "TXN-88122", title: "LESCO Electricity Bill", subtitle: "Ref: 04000184920145", amount: -12850.00, type: "bill", date: "Yesterday, 06:10 PM", cat: "bill" },
+      { id: "TXN-88121", title: "Mobile Super Card (Jazz)", subtitle: "Phone: 0301-8492011", amount: -1200.00, type: "debit", date: "24 Oct 2026", cat: "recharge" },
+      { id: "TXN-88120", title: "Received from Hamza MFS", subtitle: "Raast P2P Settlement", amount: 25000.00, type: "credit", date: "23 Oct 2026", cat: "received" },
+      { id: "TXN-88119", title: "Gloria Jean's Coffee", subtitle: "Merchant QR Payment", amount: -1850.00, type: "debit", date: "22 Oct 2026", cat: "merchant" }
+    ];
+
+    // Format Currency
+    function formatCurrency(val) {
+      return val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Update Balance UI
+    function updateBalanceUI() {
+      const el = document.getElementById('displayBalance');
+      if (balanceVisible) {
+        el.textContent = formatCurrency(currentBalance);
+        document.getElementById('btnEye').innerHTML = '<i class="fas fa-eye"></i>';
+      } else {
+        el.textContent = "••••••••";
+        document.getElementById('btnEye').innerHTML = '<i class="fas fa-eye-slash"></i>';
+      }
+    }
+
+    function toggleBalanceVisibility() {
+      balanceVisible = !balanceVisible;
+      updateBalanceUI();
+    }
+
+    // Render Ledger
+    function renderLedgers() {
+      const homeList = document.getElementById('homeLedgerList');
+      const fullList = document.getElementById('fullLedgerList');
+
+      let html = "";
+      transactions.forEach(t => {
+        const isCredit = t.type === 'credit';
+        const isBill = t.type === 'bill';
+        const iconClass = isCredit ? 'fa-arrow-down tx-credit' : (isBill ? 'fa-receipt tx-bill' : 'fa-arrow-up tx-debit');
+        const sign = isCredit ? '+' : '-';
+        const absAmt = Math.abs(t.amount);
+
+        html += `
+          <div class="ledger-item" onclick="showTxDetail('${t.id}')">
+            <div class="ledger-left">
+              <div class="tx-icon-wrap ${iconClass.split(' ')[1]}">
+                <i class="fas ${iconClass.split(' ')[0]}"></i>
+              </div>
+              <div class="tx-details">
+                <h4>${t.title}</h4>
+                <p>${t.subtitle} · ${t.date}</p>
+              </div>
+            </div>
+            <div class="tx-right">
+              <div class="tx-amount ${isCredit ? 'credit' : 'debit'}">${sign}Rs. ${formatCurrency(absAmt)}</div>
+              <div class="tx-status-pill">${t.id}</div>
+            </div>
+          </div>
+        `;
+      });
+
+      if (homeList) homeList.innerHTML = html.slice(0, 1800); // 4 recent
+      if (fullList) fullList.innerHTML = html;
+      if (document.getElementById('passbookCount')) {
+        document.getElementById('passbookCount').textContent = `${transactions.length} Entries`;
+      }
+    }
+
+    function filterLedger(type, btn) {
+      document.querySelectorAll('.quick-amounts .amount-chip').forEach(b => {
+        b.style.background = '#162038';
+        b.style.color = '#fbbf24';
+      });
+      btn.style.background = 'var(--accent-gold)';
+      btn.style.color = '#070a13';
+
+      const fullList = document.getElementById('fullLedgerList');
+      const filtered = type === 'all' ? transactions : transactions.filter(t => t.type === type);
+      
+      let html = "";
+      filtered.forEach(t => {
+        const isCredit = t.type === 'credit';
+        const isBill = t.type === 'bill';
+        const iconClass = isCredit ? 'fa-arrow-down tx-credit' : (isBill ? 'fa-receipt tx-bill' : 'fa-arrow-up tx-debit');
+        const sign = isCredit ? '+' : '-';
+        const absAmt = Math.abs(t.amount);
+
+        html += `
+          <div class="ledger-item" onclick="showTxDetail('${t.id}')">
+            <div class="ledger-left">
+              <div class="tx-icon-wrap ${iconClass.split(' ')[1]}">
+                <i class="fas ${iconClass.split(' ')[0]}"></i>
+              </div>
+              <div class="tx-details">
+                <h4>${t.title}</h4>
+                <p>${t.subtitle} · ${t.date}</p>
+              </div>
+            </div>
+            <div class="tx-right">
+              <div class="tx-amount ${isCredit ? 'credit' : 'debit'}">${sign}Rs. ${formatCurrency(absAmt)}</div>
+              <div class="tx-status-pill">${t.id}</div>
+            </div>
+          </div>
+        `;
+      });
+      fullList.innerHTML = html;
+    }
+
+    // Modal Helpers
+    function closeAllModals() {
+      document.querySelectorAll('.modal-backdrop').forEach(m => m.classList.remove('open'));
+      pinCode = "";
+      updatePinDots();
+    }
+
+    function openSendMoneyModal(type) {
+      closeAllModals();
+      if (type === 'bank') {
+        document.getElementById('sendPlatform').value = 'Meezan Bank';
+      }
+      document.getElementById('modalSendMoney').classList.add('open');
+    }
+
+    function openAddMoneyModal() {
+      closeAllModals();
+      document.getElementById('modalAddMoney').classList.add('open');
+    }
+
+    function openCashOutModal() {
+      closeAllModals();
+      calculateCashOutFee();
+      document.getElementById('modalCashOut').classList.add('open');
+    }
+
+    function openBillPayModal() {
+      closeAllModals();
+      document.getElementById('modalBillPay').classList.add('open');
+    }
+
+    function openRechargeModal() {
+      closeAllModals();
+      document.getElementById('modalRecharge').classList.add('open');
+    }
+
+    function openRaastModal() {
+      openSendMoneyModal('bank');
+      document.getElementById('sendPlatform').value = 'Raast P2P';
+    }
+
+    function openQrModal(mode) {
+      closeAllModals();
+      const modal = document.getElementById('modalQr');
+      const scanView = document.getElementById('qrScanView');
+      const myView = document.getElementById('qrMyView');
+      const title = document.getElementById('qrModalTitle');
+
+      if (mode === 'scan') {
+        scanView.style.display = 'block';
+        myView.style.display = 'none';
+        title.textContent = 'Scan Any Merchant / MFS QR';
+      } else {
+        scanView.style.display = 'none';
+        myView.style.display = 'block';
+        title.textContent = 'My eTaka Payment QR';
+      }
+      modal.classList.add('open');
+    }
+
+    function calculateCashOutFee() {
+      const amt = parseFloat(document.getElementById('cashOutAmount').value) || 0;
+      const fee = amt * 0.0175;
+      const total = amt + fee;
+      document.getElementById('cashOutFeeNote').textContent = 
+        `MFS Agent Fee (1.75%): Rs. ${formatCurrency(fee)} · Total Deducted: Rs. ${formatCurrency(total)}`;
+    }
+
+    function fillRecipient(phone) {
+      document.getElementById('sendRecipient').value = phone;
+    }
+
+    function fillAmount(inputId, val) {
+      document.getElementById(inputId).value = val;
+      if (inputId === 'cashOutAmount') calculateCashOutFee();
+    }
+
+    // PIN Pad Logic
+    function requestPinAuthorization(action) {
+      pendingAction = action;
+      closeAllModals();
+      pinCode = "";
+      updatePinDots();
+      document.getElementById('modalPin').classList.add('open');
+    }
+
+    function pressPin(digit) {
+      if (pinCode.length < 4) {
+        pinCode += digit;
+        updatePinDots();
+        if (pinCode.length === 4) {
+          setTimeout(verifyAndExecutePin, 200);
+        }
+      }
+    }
+
+    function clearPin() {
+      pinCode = pinCode.slice(0, -1);
+      updatePinDots();
+    }
+
+    function updatePinDots() {
+      for (let i = 1; i <= 4; i++) {
+        const dot = document.getElementById(`dot${i}`);
+        if (i <= pinCode.length) {
+          dot.style.background = 'var(--accent-gold)';
+          dot.style.boxShadow = '0 0 10px var(--accent-gold)';
+        } else {
+          dot.style.background = 'transparent';
+          dot.style.boxShadow = 'none';
+        }
+      }
+    }
+
+    function useBiometrics() {
+      pinCode = "1234";
+      updatePinDots();
+      setTimeout(verifyAndExecutePin, 200);
+    }
+
+    function verifyAndExecutePin() {
+      closeAllModals();
+
+      if (pendingAction === 'send') {
+        executeSendMoney();
+      } else if (pendingAction === 'cashout') {
+        executeCashOut();
+      } else if (pendingAction === 'bill') {
+        executeBillPayment();
+      } else if (pendingAction === 'recharge') {
+        executeMobileRecharge();
+      }
+    }
+
+    // Executions
+    function executeSendMoney() {
+      const amt = parseFloat(document.getElementById('sendAmount').value) || 5000;
+      const recipient = document.getElementById('sendRecipient').value || "Sarah Khan";
+      const platform = document.getElementById('sendPlatform').value || "Raast";
+
+      if (amt > currentBalance) {
+        showToast("Insufficient balance for this transfer!");
+        return;
+      }
+
+      currentBalance -= amt;
+      updateBalanceUI();
+
+      const newTxId = "TXN-" + Math.floor(10000 + Math.random() * 90000) + "-ETAKA";
+      transactions.unshift({
+        id: newTxId,
+        title: `Sent to ${recipient}`,
+        subtitle: `Via ${platform}`,
+        amount: -amt,
+        type: "debit",
+        date: "Just now",
+        cat: "sent"
+      });
+      renderLedgers();
+
+      // Show Receipt
+      document.getElementById('receiptAmount').textContent = `Rs. ${formatCurrency(amt)}`;
+      document.getElementById('receiptTxId').textContent = newTxId;
+      document.getElementById('receiptTo').textContent = `${recipient} (${platform})`;
+      document.getElementById('receiptDate').textContent = new Date().toLocaleString();
+      document.getElementById('receiptRemaining').textContent = `Rs. ${formatCurrency(currentBalance)}`;
+      document.getElementById('modalReceipt').classList.add('open');
+    }
+
+    function executeCashOut() {
+      const amt = parseFloat(document.getElementById('cashOutAmount').value) || 10000;
+      const fee = amt * 0.0175;
+      const total = amt + fee;
+      const agent = document.getElementById('cashOutAgent').value;
+
+      if (total > currentBalance) {
+        showToast("Insufficient balance for withdrawal + fee!");
+        return;
+      }
+
+      currentBalance -= total;
+      updateBalanceUI();
+
+      const newTxId = "WDL-" + Math.floor(10000 + Math.random() * 90000) + "-ATM";
+      transactions.unshift({
+        id: newTxId,
+        title: `Cash Out via Agent (${agent})`,
+        subtitle: `Withdrawal + Fee (Rs. ${formatCurrency(fee)})`,
+        amount: -total,
+        type: "debit",
+        date: "Just now",
+        cat: "cashout"
+      });
+      renderLedgers();
+
+      document.getElementById('receiptAmount').textContent = `Rs. ${formatCurrency(amt)}`;
+      document.getElementById('receiptTxId').textContent = newTxId;
+      document.getElementById('receiptTo').textContent = `Agent: ${agent}`;
+      document.getElementById('receiptDate').textContent = new Date().toLocaleString();
+      document.getElementById('receiptRemaining').textContent = `Rs. ${formatCurrency(currentBalance)}`;
+      document.getElementById('modalReceipt').classList.add('open');
+    }
+
+    function executeAddMoney() {
+      const amt = parseFloat(document.getElementById('addAmount').value) || 15000;
+      const source = document.getElementById('addSource').value;
+
+      currentBalance += amt;
+      updateBalanceUI();
+      closeAllModals();
+
+      const newTxId = "DEP-" + Math.floor(10000 + Math.random() * 90000) + "-PAY";
+      transactions.unshift({
+        id: newTxId,
+        title: `Deposit via ${source}`,
+        subtitle: "Instant Wallet Top-Up",
+        amount: amt,
+        type: "credit",
+        date: "Just now",
+        cat: "topup"
+      });
+      renderLedgers();
+      showToast(`Successfully added Rs. ${formatCurrency(amt)}!`);
+    }
+
+    function executeBillPayment() {
+      const amt = parseFloat(document.getElementById('billAmount').value) || 8450;
+      const company = document.getElementById('billCompany').value;
+      const ref = document.getElementById('billReference').value;
+
+      if (amt > currentBalance) {
+        showToast("Insufficient balance for bill payment!");
+        return;
+      }
+
+      currentBalance -= amt;
+      updateBalanceUI();
+
+      const newTxId = "BILL-" + Math.floor(10000 + Math.random() * 90000);
+      transactions.unshift({
+        id: newTxId,
+        title: `${company} Paid`,
+        subtitle: `Ref: ${ref}`,
+        amount: -amt,
+        type: "bill",
+        date: "Just now",
+        cat: "bill"
+      });
+      renderLedgers();
+
+      document.getElementById('receiptAmount').textContent = `Rs. ${formatCurrency(amt)}`;
+      document.getElementById('receiptTxId').textContent = newTxId;
+      document.getElementById('receiptTo').textContent = `${company} (Ref: ${ref})`;
+      document.getElementById('receiptDate').textContent = new Date().toLocaleString();
+      document.getElementById('receiptRemaining').textContent = `Rs. ${formatCurrency(currentBalance)}`;
+      document.getElementById('modalReceipt').classList.add('open');
+    }
+
+    function executeMobileRecharge() {
+      const amt = parseFloat(document.getElementById('rechargeAmount').value) || 1200;
+      const op = document.getElementById('rechargeOperator').value;
+      const phone = document.getElementById('rechargePhone').value;
+
+      if (amt > currentBalance) {
+        showToast("Insufficient balance for recharge!");
+        return;
+      }
+
+      currentBalance -= amt;
+      updateBalanceUI();
+
+      const newTxId = "RCHG-" + Math.floor(10000 + Math.random() * 90000);
+      transactions.unshift({
+        id: newTxId,
+        title: `${op} Mobile Load`,
+        subtitle: `Phone: ${phone}`,
+        amount: -amt,
+        type: "debit",
+        date: "Just now",
+        cat: "recharge"
+      });
+      renderLedgers();
+
+      document.getElementById('receiptAmount').textContent = `Rs. ${formatCurrency(amt)}`;
+      document.getElementById('receiptTxId').textContent = newTxId;
+      document.getElementById('receiptTo').textContent = `${op} (${phone})`;
+      document.getElementById('receiptDate').textContent = new Date().toLocaleString();
+      document.getElementById('receiptRemaining').textContent = `Rs. ${formatCurrency(currentBalance)}`;
+      document.getElementById('modalReceipt').classList.add('open');
+    }
+
+    function simulateScanMerchant() {
+      closeAllModals();
+      const amt = 1850;
+      currentBalance -= amt;
+      updateBalanceUI();
+
+      const newTxId = "POS-" + Math.floor(10000 + Math.random() * 90000);
+      transactions.unshift({
+        id: newTxId,
+        title: `Gloria Jean's Coffee (QR Pay)`,
+        subtitle: "Store #104 · Gulberg Lahore",
+        amount: -amt,
+        type: "debit",
+        date: "Just now",
+        cat: "merchant"
+      });
+      renderLedgers();
+
+      document.getElementById('receiptAmount').textContent = `Rs. ${formatCurrency(amt)}`;
+      document.getElementById('receiptTxId').textContent = newTxId;
+      document.getElementById('receiptTo').textContent = "Gloria Jean's (EMVCo QR)";
+      document.getElementById('receiptDate').textContent = new Date().toLocaleString();
+      document.getElementById('receiptRemaining').textContent = `Rs. ${formatCurrency(currentBalance)}`;
+      document.getElementById('modalReceipt').classList.add('open');
+    }
+
+    // Tabs Switcher
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active-page'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+      if (tabId === 'home') {
+        document.getElementById('pageHome').classList.add('active-page');
+        document.getElementById('navHome').classList.add('active');
+      } else if (tabId === 'analytics') {
+        document.getElementById('pageAnalytics').classList.add('active-page');
+        document.getElementById('navAnalytics').classList.add('active');
+        initExpenseChart();
+      } else if (tabId === 'deals') {
+        document.getElementById('pageDeals').classList.add('active-page');
+        document.getElementById('navDeals').classList.add('active');
+      } else if (tabId === 'history') {
+        document.getElementById('pageHistory').classList.add('active-page');
+        document.getElementById('navHistory').classList.add('active');
+      } else if (tabId === 'profile') {
+        document.getElementById('pageProfile').classList.add('active-page');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Toast
+    function showToast(msg) {
+      const toast = document.getElementById('appToast');
+      document.getElementById('toastMsg').textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2400);
+    }
+
+    function showTxDetail(id) {
+      const tx = transactions.find(t => t.id === id);
+      if (tx) {
+        showToast(`${tx.title} · Rs. ${formatCurrency(Math.abs(tx.amount))}`);
+      }
+    }
+
+    function refreshMarketData() {
+      showToast("Live Interbank Rates Synchronized!");
+    }
+
+    function openLiveRatesModal() {
+      showToast("Gold 24K: Rs. 284,500 · USD: 278.45 · BTC: $68,410");
+    }
+
+    function openRemittanceModal() {
+      openSendMoneyModal();
+      document.getElementById('sendPlatform').value = 'bKash Bangladesh';
+    }
+
+    function openMoreServicesModal() {
+      showToast("8 Core Services Active on Real Rails");
+    }
+
+    function openNotificationsModal() {
+      showToast("You have 2 new security alerts (All Clear)");
+    }
+
+    // Expense Chart
+    let chartInstance = null;
+    function initExpenseChart() {
+      const ctx = document.getElementById('expenseChart');
+      if (!ctx) return;
+      if (chartInstance) chartInstance.destroy();
+
+      chartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['P2P Transfers', 'Electricity/Gas Bills', 'Mobile Recharge', 'Merchant Pay'],
+          datasets: [{
+            data: [32500, 18200, 4550, 9000],
+            backgroundColor: ['#f59e0b', '#ef4444', '#3b82f6', '#10b981'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          cutout: '72%'
+        }
+      });
+    }
+
+    // Init
+    window.addEventListener('DOMContentLoaded', () => {
+      updateBalanceUI();
+      renderLedgers();
+
+      // Add click listener to all modal backdrops
+      document.querySelectorAll('.modal-backdrop').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            closeAllModals();
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
